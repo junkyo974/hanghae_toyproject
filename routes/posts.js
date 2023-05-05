@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const authMiddleware = require("../middlewares/auth-middleware.js");
 const Posts = require('../schemas/post.js');
+const Grid = require('gridfs-stream');
+Grid.mongo = mongoose.mongo;
+const gfs = Grid(db, mongoose.mongo);
 
 
 // 게시글 생성 : POST -> localhost:3000/posts
