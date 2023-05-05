@@ -54,7 +54,7 @@ router.get('/:postId/comments', async(req, res) => {
         res.json({ "data" : results })
     } catch (err) {
         console.log(err);
-        res.status(400).send({ message: '데이터 형식이 올바르지 않습니다.' });
+        res.status(416).send({ message: '데이터 형식이 올바르지 않습니다.' });
     }
 })
 
@@ -91,7 +91,7 @@ router.put('/:postId/comments/:commentId', authMiddleware, async(req, res) => {
         }
     } catch (err) {
         console.log(err);
-        res.status(400).send({ message: '댓글 수정에 실패하였습니다.' });
+        res.status(415).send({ message: '댓글 수정에 실패하였습니다.' });
     }
 });
 
@@ -128,7 +128,7 @@ router.delete('/:postId/comments/:commentId', authMiddleware, async(req, res) =>
         }
     } catch (err) {
         console.log(err);
-        res.status(400).send({ message: '댓글 삭제에 실패하였습니다.' });
+        res.status(415).send({ message: '댓글 삭제에 실패하였습니다.' });
     }
 });
 
