@@ -15,14 +15,14 @@ router.post('/:postId/comments', authMiddleware, async (req, res) => {
         if ((req.body.comment).length > 0) {
             comment = req.body.comment;
         } else if ((req.body.comment).length === 0){
-            return res.status(412).json({ errorMessage: "댓글 내용을 입력해주세요."}); 
+            return res.status(410).json({ errorMessage: "댓글 내용을 입력해주세요."}); 
         } else {
-            return res.status(412).json({ errorMessage: "데이터 형식이 올바르지 않습니다."}); 
+            return res.status(410).json({ errorMessage: "데이터 형식이 올바르지 않습니다."}); 
         };
 
         const existPost = await Posts.findOne({ _id: postId });
         if (!existPost) {
-            return res.status(404).json({ errorMessage: '게시글이 존재하지 않습니다.' });
+            return res.status(412).json({ errorMessage: '게시글이 존재하지 않습니다.' });
         };
 
         await Comments.create({ postId, userId, nickname, comment });
@@ -54,7 +54,7 @@ router.get('/:postId/comments', async(req, res) => {
         res.json({ "data" : results })
     } catch (err) {
         console.log(err);
-        res.status(400).send({ message: '데이터 형식이 올바르지 않습니다.' });
+        res.status(416).send({ message: '데이터 형식이 올바르지 않습니다.' });
     }
 })
 
@@ -67,19 +67,19 @@ router.put('/:postId/comments/:commentId', authMiddleware, async(req, res) => {
 
         const existPost = await Posts.findOne({_id: postId});
         if (!existPost) {
-            return res.status(404).json({ errorMessage: '게시글이 존재하지 않습니다.' });
+            return res.status(412).json({ errorMessage: '게시글이 존재하지 않습니다.' });
         }
         
         const existComment = await Comments.findOne({ _id:commentId });
         if (!existComment) {
-            return res.status(404).json({ errorMessage: '댓글이 존재하지 않습니다.' });
+            return res.status(412).json({ errorMessage: '댓글이 존재하지 않습니다.' });
         }
 
         let comment;
         if ((req.body.comment).length > 0) {
             comment = req.body.comment;
         } else {
-            return res.status(412).json({ errorMessage: "데이터 형식이 올바르지 않습니다."}); 
+            return res.status(410).json({ errorMessage: "데이터 형식이 올바르지 않습니다."}); 
         };
 
         if (userId === existComment.userId) {
@@ -87,11 +87,11 @@ router.put('/:postId/comments/:commentId', authMiddleware, async(req, res) => {
             await Comments.updateOne({_id:commentId}, { $set: { comment, updatedAt }});
             return res.status(201).json({ message: '댓글을 수정하였습니다.' });
         } else {
-            return res.status(403).json({ errorMessage: '댓글의 수정 권한이 존재하지 않습니다.' });
+            return res.status(414).json({ errorMessage: '댓글의 수정 권한이 존재하지 않습니다.' });
         }
     } catch (err) {
         console.log(err);
-        res.status(400).send({ message: '댓글 수정에 실패하였습니다.' });
+        res.status(415).send({ message: '댓글 수정에 실패하였습니다.' });
     }
 });
 
@@ -104,19 +104,19 @@ router.delete('/:postId/comments/:commentId', authMiddleware, async(req, res) =>
 
         const existPost = await Posts.findOne({_id: postId});
         if (!existPost) {
-            return res.status(404).json({ errorMessage: '게시글이 존재하지 않습니다.' });
+            return res.status(412).json({ errorMessage: '게시글이 존재하지 않습니다.' });
         }
         
         const existComment = await Comments.findOne({ _id:commentId });
         if (!existComment) {
-            return res.status(404).json({ errorMessage: '댓글이 존재하지 않습니다.' });
+            return res.status(412).json({ errorMessage: '댓글이 존재하지 않습니다.' });
         }
 
         let comment;
         if ((req.body.comment).length > 0) {
             comment = req.body.comment;
         } else {
-            return res.status(412).json({ errorMessage: "데이터 형식이 올바르지 않습니다."}); 
+            return res.status(410).json({ errorMessage: "데이터 형식이 올바르지 않습니다."}); 
         };
 
         if (userId === existComment.userId) {
@@ -124,11 +124,11 @@ router.delete('/:postId/comments/:commentId', authMiddleware, async(req, res) =>
             await Comments.deleteOne({_id:commentId});
             return res.status(201).json({ message: '댓글을 삭제하였습니다.' });
         } else {
-            return res.status(403).json({ errorMessage: '댓글의 삭제 권한이 존재하지 않습니다.' });
+            return res.status(414).json({ errorMessage: '댓글의 삭제 권한이 존재하지 않습니다.' });
         }
     } catch (err) {
         console.log(err);
-        res.status(400).send({ message: '댓글 삭제에 실패하였습니다.' });
+        res.status(415).send({ message: '댓글 삭제에 실패하였습니다.' });
     }
 });
 
