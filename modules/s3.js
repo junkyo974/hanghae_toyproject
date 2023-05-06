@@ -22,10 +22,13 @@ const uploadImage = multer({
             const currentYear = today.getFullYear();
             const currentMonth = today.getMonth() + 1;
             const currentDate = today.getDate();
-            const date = `${currentYear}-${currentMonth}-${currentDate}`;
+            const currentHour = today.getHours();
+            const currentMinute = today.getMinutes();
+            const currentSecond = today.getSeconds();
+            const date = `${currentYear}-${currentMonth}-${currentDate}-${currentHour}-${currentMinute}-${currentSecond}`;
             
             let randomNumber = '';
-            for (let i = 0; i < 11; i++) {
+            for (let i = 0; i < 4; i++) {
                 randomNumber += String(Math.floor(Math.random() * 10));
             }
             
