@@ -1,6 +1,8 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const app = express();
+
+let attachment;
 const port = 3000;
 
 const postsRouter = require('./routes/posts');
