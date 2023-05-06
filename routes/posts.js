@@ -60,7 +60,8 @@ router.get('/:postId', async (req, res) => {
             title: post.title,
             content: post.content,
             createdAt: post.createdAt,
-            updatedAt: post.updatedAt
+            updatedAt: post.updatedAt,
+            photo_ip: post.photo_ip,
         };
         res.json({ data: result });
     } catch (err) {
