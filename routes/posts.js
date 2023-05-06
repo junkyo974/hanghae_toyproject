@@ -2,17 +2,17 @@ const express = require('express');
 const router = express.Router();
 const authMiddleware = require("../middlewares/auth-middleware.js");
 const Posts = require('../schemas/post.js');
-const Grid = require('gridfs-stream');
-Grid.mongo = mongoose.mongo;
-const gfs = Grid(db, mongoose.mongo);
+const uploadImage = require('../modules/s3.js');
+
 
 
 // 게시글 생성 : POST -> localhost:3000/posts
-router.post('/', authMiddleware, async (req, res) => {
+router.post('/', authMiddleware, uploadImage.single('photo'), async (req, res) => {
     try {
         const { userId, nickname } = res.locals.user;
         const { title, content } = req.body;
-        await Posts.create({ userId, nickname, title, content });
+        const { photo_ip } = req;
+        await Posts.create({ userId, nickname, title, content, photo_ip });
         return res.status(200).json({ message: '게시글 작성에 성공하였습니다.' })
     } catch {
         return res.status(416).json({ message: '데이터 형식이 올바르지 않습니다.' });
@@ -33,7 +33,8 @@ router.get('/', async (req, res) => {
                 nickname: item.nickname,
                 title: item.title,
                 createdAt: item.createdAt,
-                updatedAt: item.updatedAt
+                updatedAt: item.updatedAt,
+                photo_ip : item.photo_ip,
             };
         }).sort((a, b) => {
             return b.createdAt.getTime() - a.createdAt.getTime();
@@ -65,6 +66,21 @@ router.get('/:postId', async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(400).send({ message: '게시글 조회에 실패하였습니다.' });
+    }
+});
+
+// 게시글 검색 조회 -> :keyword 부분에 검색 원하는 text 입력
+router.get('/search/:keyword', async (req, res) => {
+    try {
+    let result = await Posts.find({ title: { $regex: req.params.keyword } });
+    if (result.length === 0) {
+        res.status(400).send({ message : "게시글이 존재하지 않습니다."})
+    } else {
+    return res.status(200).json({ data: result });
+    }
+    } catch (err) {
+        console.error(err);
+        res.status(400).send({ message : "게시글 조회에 실패하였습니다."})
     }
 });
 
