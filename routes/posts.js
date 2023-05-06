@@ -69,6 +69,12 @@ router.get('/:postId', async (req, res) => {
     }
 });
 
+// 게시글 검색 조회
+router.get('/search/:keyword', async (req, res) => {
+	let result = await Posts.find({ title: { $regex: req.params.keyword } });
+	return res.status(200).json({ data: result });
+});
+
 
 // 게시글 수정 : PUT -> localhost:3000/posts/:postId
 router.put('/:postId', authMiddleware, async (req, res) => {
