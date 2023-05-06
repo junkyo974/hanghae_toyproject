@@ -16,6 +16,8 @@ router.post('/:postId/comments', authMiddleware, async (req, res) => {
             comment = req.body.comment;
         } else if ((req.body.comment).length === 0){
             return res.status(410).json({ errorMessage: "댓글 내용을 입력해주세요."}); 
+        } else if(!res.locals.user) {
+            return res.status(403).json({ errorMessage: "로그인이 필요한 기능입니다."})
         } else {
             return res.status(410).json({ errorMessage: "데이터 형식이 올바르지 않습니다."}); 
         };
@@ -26,9 +28,9 @@ router.post('/:postId/comments', authMiddleware, async (req, res) => {
         };
 
         await Comments.create({ postId, userId, nickname, comment });
-        return res.status(201).json({ message: '댓글을 작성하였습니다.' })
-    } catch (err) {
-        console.error(err);
+        return res.status(201).json({ message: '댓글을 작성하였습니다.' });
+    } catch (error) {
+        console.error(`${req.method} ${req.originalUrl} : ${error.message}`);
         return res.status(400).send({ message: '댓글 작성에 실패하였습니다.' });
     }
 });
@@ -52,8 +54,8 @@ router.get('/:postId/comments', async(req, res) => {
             return b.createdAt.getTime() - a.createdAt.getTime();
         });     // 내림차순 방법 2 (둘 중 하나만 해도 먹힘)
         res.json({ "data" : results })
-    } catch (err) {
-        console.log(err);
+    } catch (error) {
+        console.error(`${req.method} ${req.originalUrl} : ${error.message}`);
         res.status(416).send({ message: '데이터 형식이 올바르지 않습니다.' });
     }
 })
@@ -89,8 +91,8 @@ router.put('/:postId/comments/:commentId', authMiddleware, async(req, res) => {
         } else {
             return res.status(414).json({ errorMessage: '댓글의 수정 권한이 존재하지 않습니다.' });
         }
-    } catch (err) {
-        console.log(err);
+    } catch (error) {
+        console.error(`${req.method} ${req.originalUrl} : ${error.message}`);
         res.status(415).send({ message: '댓글 수정에 실패하였습니다.' });
     }
 });
@@ -126,8 +128,8 @@ router.delete('/:postId/comments/:commentId', authMiddleware, async(req, res) =>
         } else {
             return res.status(414).json({ errorMessage: '댓글의 삭제 권한이 존재하지 않습니다.' });
         }
-    } catch (err) {
-        console.log(err);
+    } catch (error) {
+        console.error(`${req.method} ${req.originalUrl} : ${error.message}`);
         res.status(415).send({ message: '댓글 삭제에 실패하였습니다.' });
     }
 });
