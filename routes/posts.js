@@ -69,10 +69,19 @@ router.get('/:postId', async (req, res) => {
     }
 });
 
-// 게시글 검색 조회
+// 게시글 검색 조회 -> :keyword 부분에 검색 원하는 text 입력
 router.get('/search/:keyword', async (req, res) => {
-	let result = await Posts.find({ title: { $regex: req.params.keyword } });
-	return res.status(200).json({ data: result });
+    try {
+    let result = await Posts.find({ title: { $regex: req.params.keyword } });
+    if (result.length === 0) {
+        res.status(400).send({ message : "게시글이 존재하지 않습니다."})
+    } else {
+    return res.status(200).json({ data: result });
+    }
+    } catch (err) {
+        console.error(err);
+        res.status(400).send({ message : "게시글 조회에 실패하였습니다."})
+    }
 });
 
 
