@@ -12,10 +12,17 @@ router.post('/', authMiddleware, uploadImage.single('photo'), async (req, res) =
         const { userId, nickname } = res.locals.user;
         const { title, content } = req.body;
         const { photo_ip } = req;
+        if(!title){
+            return res.status(410).json({ message: '게시글 제목의 형식이 일치하지 않습니다.' })
+        }
+        if(!content){
+            return res.status(410).json({ message: '게시글 내용의 형식이 일치하지 않습니다.' })
+        }
         await Posts.create({ userId, nickname, title, content, photo_ip });
         return res.status(200).json({ message: '게시글 작성에 성공하였습니다.' })
     } catch {
-        return res.status(416).json({ message: '데이터 형식이 올바르지 않습니다.' });
+        console.error(err);
+        return res.status(400).json({ message: '게시글 작성에 실패하였습니다.' });
     }
 });
 
