@@ -60,14 +60,12 @@ router.post('/authMail', async (req, res) => {
       }
 
 
-<<<<<<< HEAD
+
       transporter.sendMail(mailOptions, (error, info) => { // 이메일 발송
          res.status(200).json({ "message": `${email}주소로 이메일 발송 성공` })
-            console.log('이메일 발송에 성공했습니다: ' ) // 성공
+            // console.log('이메일 발송에 성공했습니다: ' ) // 성공
          transporter.close()
       })
-=======
->>>>>>> 53416a91f848a96dce2c227320526a7a7b18858e
    } catch (error) {
       console.error(`${req.method} ${req.originalUrl} : ${error.message}`);
    }
