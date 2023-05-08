@@ -1,11 +1,36 @@
 {
   "dependencies": {
     "cookie-parser": "^1.4.6",
+    "dotenv": "^16.0.3",
+    "ejs": "^3.1.9",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^7.0.4",
+    "morgan": "^1.10.0",
+    "nodemailer": "^6.9.1",
     "nodemon": "^2.0.22",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^4.6.2"
+  },
+  "name": "hanghae_toyproject",
+  "description": "1. 게시글 생성\r    - HTTP METHOD : POST\r    - URL : localhost:3000/posts\r    - REQ : request.body {user, password, title, content}\r    - RES : status(200).{ message : 게시글 생성하였습니다. }\r           status(400).{ message : 데이터 형식이 잘못되었습니다. }\r    - to.DB : create ({user, password, title, content})\r    - from. DB : {_id, user, password, title, content, createdAt}",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ystar5008/hanghae_toyproject.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ystar5008/hanghae_toyproject/issues"
+  },
+  "homepage": "https://github.com/ystar5008/hanghae_toyproject#readme",
+  "devDependencies": {
+    "jest": "^29.5.0"
   }
 }
