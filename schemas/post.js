@@ -24,13 +24,17 @@ const PostSchema = new mongoose.Schema({
     },
     updatedAt: {
         type: Date
+    },
+    photo_ip:{
+        type: String,
+        required: true
     }
 });
 
 
 PostSchema.virtual("postId").get(function () {
     return this._id.toHexString();
- });
+});
 
 PostSchema.set("toJSON", {
     virtuals: true   // JSON 형태로 가공할 때, postId를 출력시켜준다.

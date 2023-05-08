@@ -1,12 +1,15 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const app = express();
+
+let attachment;
 const port = 3000;
 const morgan = require("morgan")
 
 const postsRouter = require('./routes/posts');
 const commentsRouter = require('./routes/comments');
 const usersRouter = require("./routes/users.js");
+const likesRouter = require("./routes/likes.js");
 
 const connect = require('./schemas');
 connect();
@@ -19,6 +22,7 @@ app.get('/', (req, res) => {
     res.send('/ Test!!!');
 });
 
+app.use('/posts', [likesRouter]);
 app.use('/posts', [postsRouter, commentsRouter]);
 app.use('/', usersRouter)
 

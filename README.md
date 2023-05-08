@@ -1,143 +1,56 @@
-# REPORT. NODEJS LV1
+## 프로젝트명:PIK TOK📽
+ - 자신이 찍은 사진을 공유하고 의견을 남길 수 있는 소셜 네트워크 서비스
 
-### 게시글 RESTful API
-1. 게시글 생성
-   - HTTP METHOD : POST
-   - URL : localhost:3000/posts
-   - REQ : request.body {user, password, title, content}
-   - RES : status(200).{ message : 게시글 생성하였습니다. }
-          status(400).{ message : 데이터 형식이 잘못되었습니다. }
-   - to.DB : create ({user, password, title, content})
-   - from. DB : {_id, user, password, title, content, createdAt}
+ </br></br>
+## 팀원소개
+|이름|주특기|깃허브 주소|담당 기능|
+|:---|:------|:---|:---|
+|박지태(L)|React||메인 페이지 레이아웃|
+|김동휘|React||로그인,회원가입,사진업로드 모달 레이아웃|
+|김용식(L)|Node.js|https://github.com/ystar5008| 로그인, 회원가입, 이메일 인증|
+|조우상|Node.js||메인 페이지 사진 조회, 사진 업로드, 사진 상세조희, 사진 수정, 사진 삭제 |
+|박준수|Node.js|https://github.com/ParkBrianJunSoo|댓글 생성, 댓그 조회, 댓글 삭제, 대댓글 생성, 대댓글 조회, 대댓글 수정, 대댓글 삭제|
+|이준교|Node.js|https://github.com/junkyo974|게시글 검색, 좋아요|
 
-2. 게시글 조회 (createdAt 기준 내림차순)
-   - HTTP METHOD : GET
-   - URL : localhost:3000/posts
-   - RES : status(200).{ date : [{postId(=_id), user, title, createdAt}}].sort(a,b)=>{b.createdAt-a.createdAt}}
-          status(400).{ message : 데이터 형식이 잘못되었습니다. }
+</br></br>
+## 관련링크
+||링크|
+|:---|:------|
+|팀 노션|https://ystar5008.notion.site/S-A-d974e5b0311b43208c76fee84ba65242|
+|S.A 구글시트|https://github.com/junkyo974/hanghae_toyproject|
+|FE 깃허브|https://github.com/Ji-Tae/99-mini-project/tree/main|
+|BE 깃허브|https://docs.google.com/spreadsheets/d/1SlEcS5mZ2IBsPD7mMMmkCKhvKdICLsHAcazzd12BQME/edit#gid=877753956|
 
-3. 게시글 상세 조회
-   - HTTP METHOD : GET
-   - URL : localhost:3000/posts/:postId
-   - REQ : request.params (:postId)
-   - RES : status(200).{ date : {postId(=_id), user, title, content, createdAt}}
+</br></br>
+## 스코프🛒
+|스코프|기능|
+|:---|:------|
+|1차|로그인, 회원가입, 댓글 ,사진 CRUD, 게시글 검색|
+|2차|좋아요, 대댓글|
+|3차|좋아요 알림, 카테고리 랜덤 사진추천, 검색 옵션 추가, 해시태그, 지도 API활용하여 근처 유저와 같이 사진찍기|
 
-4. 게시글 수정
-   - HTTP METHOD : PUT
-   - URL : localhost:3000/posts/:postId
-   - REQ : request.params {:postId}, request.body {password, title, content}
-   - RES : status(200).{ message : 게시글 수정되었습니다. }
-          status(400).{ message : 데이터 형식이 잘못되었습니다. }
-   - to.DB : updateOne ({_id:postId}, {title, content})
+</br></br>
+## FE Stack⚙
+<p>
+  <img src="https://img.shields.io/badge/-React-%2361DAFB?style=flat-square&logo=react&logoColor=white" alt="React">
+  <img src="https://img.shields.io/badge/-Swiper-6332F6?style=flat-square&logo=swiper&logoColor=black" alt="React">
+</p>
 
-5. 게시글 삭제
-   - HTTP METHOD : DELETE
-   - URL : localhost:3000/posts/:postId
-   - REQ : request.params {:postId}, request.body {password}
-   - RES : status(200).{ message : 게시글 수정되었습니다. }
-          status(400).{ message : 데이터 형식이 잘못되었습니다. }
-   - to.DB : deleteOne ({_id:postId})
+</br></br>
+## BE Stack⚙
+<p>
+  <img src="https://img.shields.io/badge/-Node.js-%339933?style=flat-square&logo=node.js&logoColor=white" alt="Node.js">
+  <img src="https://img.shields.io/badge/-MongoDB-47A248?style=flat-square&logo=mongodb&logoColor=white" alt="MongoDB">
+  <img src="https://img.shields.io/badge/-Mongoose-880000?style=flat-square&logo=mongoose&logoColor=white" alt="MongoDB">
+</p>
 
+</br></br>
+## 와이어프레임🛠
+![1](https://user-images.githubusercontent.com/96641210/236680252-0f15dbb2-9110-4b3a-84d4-aa951bb61381.jpg)
+![2](https://user-images.githubusercontent.com/96641210/236680256-62bd7734-72fd-4325-9092-e908ed19f746.jpg)
+![3](https://user-images.githubusercontent.com/96641210/236680258-9bf68e83-2f16-47db-802e-8f32025fc93f.jpg)
+![4](https://user-images.githubusercontent.com/96641210/236680261-6d09c735-a920-4026-a7c0-c998cfef384f.jpg)
 
-### 댓글 RESTful API
-.   
-.
-***
-# REPORT. NODEJS LV2
-
-### 회원가입 API 개요
-   - { nickname, password, confirm } = request
-   - nickname ?
-      - 최소 3자 이상
-      - 알파벳 대소문자 (a-z, A-Z)
-      - 숫자 (0~9)
-      - DB.nickname 중복 ? "중복된 닉네임 입니다. errMessage
-   - password ?
-      - 최소 4자 이상
-      - 닉네임 같은 값 포함 X -> 회원가입 실패로 만들기
-   - password === confirm
-### 회원가입 API 명세서  
-   - URL : /signup
-   - Method : POST
-   - Req : nickname, password, confirm
-   - Res (가입성공) :
-      - status(201).json({ message: "회원 가입에 성공하였습니다.});
-   - Res (닉네임 형식 비정상) :
-      - status(412).json({ errorMessage: "닉네임의 형식이 일치하지 않습니다.});
-   - Res (패스워드,확인패스워드 일치하지 않는 경우) :
-      - status(412).json({ errorMessage: "패스워드가 일치하지 않습니다."});
-   - Res (패스워드 형식이 비정상) :
-      - status(412).json({ errorMessage: "패스워드 형식이 일치하지 않습니다."});
-   - Res (패스워드에 닉네임이 포함되어있는 경우) :
-      - status(412).json({ errorMessage: "패스워드에 닉네임이 포함되어 있습니다."});
-   - Res (닉네임이 중복된 경우) :
-      - status(412).json({ errorMessage: "중복된 닉네임입니다."});
-   - Res (예외 케이스에서 처리하지 못한 에러) :
-      - status(400).json({ errorMessage: "요청한 데이터 형식이 올바르지 않습니다."});
-
-### 로그인 API 개요
-   - { nickname, password } = request
-   - 로그인 버튼 -> nickname, password === DB.nickname, password ?   
-      falsy: errMessage : 닉네임 또는 패스워드를 확인해주세요.
-   - 로그인 성공 -> 유저정보 JWT활용하여 클라이언트 쿠키로 전달
-
-### 로그인 API 명세서
-   - URL : /login
-   - Method : POST
-   - Req : nickname, password
-   - Res (로그인 성공) :
-      - status(200).json({ "token": asfasfsafasfasfasf });
-   - Res.Header (로그인 성공) :
-      - {"Authorization": "Bearer asfsafdsadfasdfasfdaf"};
-   - Res (해당유저가 존재하지 않는 경우) :
-      - status(412).json({ errorMessage: "닉네임 또는 패스워드를 확인해주세요."});
-   - Res (예외 케이스에서 처리하지 못한 에러) :
-      - status(400).json({ errorMessage: "로그인에 실패하였습니다."});
-
-
-### 전체 게시글 목록 조회 API 개요
-   - title, nickname, createdAt 조회
-   - createdAt 기준 내림차순 정렬
-
-### 전체 게시글 목록 조회 API 정의서
-   - URL : /posts
-   - Method : GET
-   - Res : { "posts": [{postId, userId, nickname, title, createdAt, updatedAt}, {...}]}
-   - Res (예외 케이스에서 처리하지 못한 에러) :
-      - status(400).json({ errorMessage: "게시글 조회에 실패하였습니다."});
-
-### 게시글 작성 API 개요
-   - 토큰을 검사하여, 유효한 토큰일 경우에만 게시글 작성 가능
-   - title, content 입력 -> { title, content } = req.body
-
-### 게시글 작성 API 정의서
-   - URL : /posts
-   - Method : POST
-   - Req Header : { "Authorization": "Bearer asdfasdfasfaf" }
-   - Req Body : { title, content }
-   - Res (성공)
-      - status(201).json({ message: "게시글 작성에 성공하였습니다." })
-   - Res (데이터가 정상적으로 전달되지 않는 경우)
-      - status(412).json({ errorMessage: 데이터 형식이 올바르지 않습니다." })
-   - Res
-
-### 게시글 수정 API 정의서
-   - URL : /posts/:postId
-   - Method : PUT
-   - Res - 데이터 전달되지 않는 경우
-      - status(412) -> "데이터 형식이 올바르지 않습니다."
-   - Res - Title 비정상
-      - status(412) -> "게시글 제목의 형식이 일치하지 않습니다."
-   - Res - Content 비정상
-      - status(412) -> "게시글 내용의 형식이 일치하지 않습니다."
-   - Res - 게시글 수정권한 X
-      - status(403) -> "게시글 수정의 권한이 존재하지 않습니다."
-   - Res - 쿠키 없을 경우
-      - status(403) -> "로그인이 필요한 기능입니다."
-   - Res - 쿠키 비정상적이거나 만료된 경우
-      - status(403) -> "전달된 쿠키에서 오류가 발생하였습니다."
-   - Res - 게시글 수정 실패
-      - status(401) -> "게시글이 정상적으로 수정되지 않았습니다.”
-   - Res - 예외 케이스 외
-      - status(400) -> "게시글 수정에 실패하였습니다."
-
+</br></br>
+## ERD🖥
+![Untitled](https://user-images.githubusercontent.com/96641210/236680223-3a149814-03ae-478f-b321-b339a9b57f79.png)
