@@ -13,15 +13,15 @@ router.post('/', authMiddleware, uploadImage.single('photo'), async (req, res) =
         const { userId, nickname } = res.locals.user;
         const { title, content } = req.body;
         const { photo_ip } = req;
-        if(!title){
+        if (!title) {
             return res.status(410).json({ message: '게시글 제목의 형식이 일치하지 않습니다.' })
         }
-        if(!content){
+        if (!content) {
             return res.status(410).json({ message: '게시글 내용의 형식이 일치하지 않습니다.' })
         }
         await Posts.create({ userId, nickname, title, content, photo_ip });
         return res.status(200).json({ message: '게시글 작성에 성공하였습니다.' })
-    } catch {
+    } catch (err) {
         console.error(err);
         return res.status(400).json({ message: '게시글 작성에 실패하였습니다.' });
     }
@@ -36,7 +36,7 @@ router.get('/posts', async (req, res) => {
     try {
         const postCount = await Posts.countDocuments();
         if (postCount === 0) {
-            return res.status(404).json({ message: '게시물이 존재하지 않습니다.' });
+            return res.status(412).json({ message: '게시물이 존재하지 않습니다.' });
         }
         const randomIndex = Math.floor(Math.random() * postCount);
         const randomPost = await Posts.aggregate([
