@@ -21,10 +21,11 @@ router.post('/authMail', async (req, res) => {
 
    try {
       let emailTemplete;
-      ejs.renderFile(appDir + '/template/authMail.ejs', { authCode: authNum }, function (err, data) {
-         if (err) { console.log(err) }
-         emailTemplete = data;
-      });
+      ejs.renderFile(appDir + '/template/authMail.ejs',
+         { authCode: authNum }, function (err, data) {
+            if (err) { console.log(err) }
+            emailTemplete = data;
+         });
 
 
       let transporter = nodemailer.createTransport({ // 보내는사람 메일 설정입니다.
@@ -50,66 +51,77 @@ router.post('/authMail', async (req, res) => {
             errorMessage: "이메일의 형식이 일치하지 않습니다."
          })
          return
-      };
+      } else {
+         transporter.sendMail(mailOptions, (error, info) => { // 이메일 발송
+            res.status(200)
+               .json({ "message": `${email}주소로 이메일 발송 성공` })
+            transporter.close()
+         })
+      }
+
+
 
       transporter.sendMail(mailOptions, (error, info) => { // 이메일 발송
          res.status(200).json({ "message": `${email}주소로 이메일 발송 성공` })
-            .console.log('이메일 발송에 성공했습니다: ' + info.response); // 성공
+            // console.log('이메일 발송에 성공했습니다: ' ) // 성공
          transporter.close()
       })
    } catch (error) {
       console.error(`${req.method} ${req.originalUrl} : ${error.message}`);
    }
-
 })
 
 // 회원 가입 API
 router.post('/signup', async (req, res) => {
-   const { nickname, password, confirm, authcode } = req.body
+   const { authcode, nickname, password, confirm, } = req.body
+   function isValidNickname(nickname) {
+      const nicknameRegex = /^[a-zA-Z0-9]+$/ig;
+      return nicknameRegex.test(nickname);
+   }
+
    try {
-      if (authcode === authNum) {
-         const isExistuser = await UserSchema.findOne({ nickname });
-         if (isExistuser) {
-            res.status(412).json({
-               errorMessage: "중복된 닉네임입니다."
-            })
-            return
-         };
-
-         // 패스워드, 확인패스워드 일치 검증
-         if (password !== confirm) {
-            res.status(412).json({
-               errorMessage: "패스워드가 일치하지 않습니다."
-            })
-            return  // 패스워드 검증이 실패하면 뒤에는 실행시키지 않도록 return으로 브레이크
-         };
-
-         // 패스워드 닉네임을 포함시키면 에러메세지
-         if (password.includes(nickname)) {
-            res.status(412).json({
-               errorMessage: "패스워드에 닉네임이 포함되어 있습니다."
-            })
-            return
-         };
-
-         // 닉네임 최소 3글자 이상, 알파벳 대소문자, 숫자 외 에러메세지
-         if ((!/^[a-zA-Z0-9]$/.test(nickname)) || (nickname.length < 4)) {
-            res.status(412).json({
-               errorMessage: "이메일의 형식이 일치하지 않습니다."
-            })
-            return
-         };
-         // 패스워드 4글자 이하이면 에러메세지 
-         if (password.length <= 4) {
-            res.status(412).json({
-               errorMessage: "패스워드 형식이 일치하지 않습니다."
-            })
-            return
-         }
-      } else {
-         res.status(412).json({
+      if (authcode !== authNum) {
+         return res.status(412).json({
             errorMessage: "인증코드가 일치하지 않습니다"
+         });
+      }
+      const isExistuser = await UserSchema.findOne({ nickname });
+      if (isExistuser) {
+         res.status(412).json({
+            errorMessage: "중복된 닉네임입니다."
          })
+         return
+      };
+
+      // 패스워드, 확인패스워드 일치 검증
+      if (password !== confirm) {
+         res.status(412).json({
+            errorMessage: "패스워드가 일치하지 않습니다."
+         })
+         return
+      };
+
+      // 패스워드 닉네임을 포함시키면 에러메세지
+      if (password.includes(nickname)) {
+         res.status(412).json({
+            errorMessage: "패스워드에 닉네임이 포함되어 있습니다."
+         })
+         return
+      };
+
+      // 닉네임 최소 3글자 이상, 알파벳 대소문자, 숫자 외 에러메세지
+      if (!(isValidNickname(nickname)) || (nickname.length < 4)) {
+         res.status(412).json({
+            errorMessage: "이메일의 형식이 일치하지 않습니다."
+         })
+         return
+      };
+      // 패스워드 4글자 이하이면 에러메세지 
+      if (password.length < 4) {
+         res.status(412).json({
+            errorMessage: "패스워드 형식이 일치하지 않습니다."
+         })
+         return
       }
 
       // 닉네임 DB 중복 검증
@@ -118,7 +130,7 @@ router.post('/signup', async (req, res) => {
       return res.status(201).json({ message: "회원 가입에 성공하였습니다." });
 
    } catch (error) {
-      console.error(`${req.method} ${req.originalUrl} : ${error.message}`);
+      // console.error(`${req.method} ${req.originalUrl} : ${error.message}`);
       res.status(400).json({ "message": "이메일 발송 실패" })
    }
 
