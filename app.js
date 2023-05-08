@@ -22,9 +22,11 @@ app.get('/', (req, res) => {
     res.send('/ Test!!!');
 });
 
+app.use('/newposts', postsRouter);
+
 app.use('/posts', [likesRouter]);
 app.use('/posts', [postsRouter, commentsRouter]);
-app.use('/', usersRouter)
+app.use('/', [usersRouter, postsRouter])
 
 
 app.listen(port, () => {
