@@ -18,12 +18,14 @@ router.post('/authMail', async (req, res) => {
       return nicknameRegex.test(email);
    }
 
+
    try {
       let emailTemplete;
       ejs.renderFile(appDir + '/template/authMail.ejs', { authCode: authNum }, function (err, data) {
          if (err) { console.log(err) }
          emailTemplete = data;
       });
+
 
       let transporter = nodemailer.createTransport({ // 보내는사람 메일 설정입니다.
          service: 'Naver', // 보낼 메일서비스명
@@ -135,7 +137,7 @@ router.post('/login', async (req, res) => {
       // 1. 이메일에 일치하는 유저가 존재하지 않거나
       // 2. 유저를 찾았지만, 유저의 비밀번호와 입력한 비밀번호가 다를 때
       if (!user || user.password !== password) {
-         res.status(412).json({ errorMessage: "닉네임 또는 패스워드를 확인해주세요." });
+         res.status(410).json({ errorMessage: "닉네임 또는 패스워드를 확인해주세요." });
          return;  // 다음코드로 진행되지 않도록 막을거다.
       };
 
