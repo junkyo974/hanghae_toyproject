@@ -54,7 +54,7 @@ router.post('/authMail', async (req, res) => {
 
       transporter.sendMail(mailOptions, (error, info) => { // 이메일 발송
          res.status(200).json({ "message": `${email}주소로 이메일 발송 성공` })
-            .console.log('이메일 발송에 성공했습니다: ' + info.response); // 성공
+            console.log('이메일 발송에 성공했습니다: ' ) // 성공
          transporter.close()
       })
    } catch (error) {
@@ -118,7 +118,7 @@ router.post('/signup', async (req, res) => {
       return res.status(201).json({ message: "회원 가입에 성공하였습니다." });
 
    } catch (error) {
-      console.error(`${req.method} ${req.originalUrl} : ${error.message}`);
+      // console.error(`${req.method} ${req.originalUrl} : ${error.message}`);
       res.status(400).json({ "message": "이메일 발송 실패" })
    }
 
