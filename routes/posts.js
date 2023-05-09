@@ -63,7 +63,7 @@ router.get('/', async (req, res) => {
 
 
 // best photo 조회
-router.get('/best', async (req, res) => {
+router.get('/bestposts', async (req, res) => {
 
     try {
         const posts = await Posts.find()
