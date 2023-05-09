@@ -31,6 +31,8 @@ router.put("/:postId/like", authMiddleware, async (req, res) => {
     }
 });
 
+
+
 router.get("/like", authMiddleware, async (req, res) => {
     const { userId } = res.locals.user;
     

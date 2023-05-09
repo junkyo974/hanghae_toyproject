@@ -55,6 +55,34 @@ router.get('/', async (req, res) => {
     }
 });
 
+// best photo 조회
+router.get('/best', async (req, res) => {
+
+    try {
+        const posts = await Posts.find()
+        const results = await Promise.all(posts.map(async (item) => {
+        const post = {
+        postId: item.postId,
+        userId: item.userId,
+        nickname: item.nickname,
+        title: item.title,
+        createdAt: item.createdAt,
+        updatedAt: item.updatedAt,
+        photo_ip : item.photo_ip,
+        };
+        const likeCount = await Likes.countDocuments({ postId: item.postId });
+        post.likeCount = likeCount;
+
+        return post;
+        }))
+        const bestPost = results.reduce((prev, curr) => (prev.likeCount > curr.likeCount ? prev : curr));
+
+        res.json({ data: bestPost });
+    } catch (err) {
+        console.error(err);
+        res.status(400).send({ message: '게시글 조회에 실패하였습니다.' });
+    }
+});
 
 // 게시글 상세조회 : GET -> localhost:3000/posts/:postId
 router.get('/:postId', async (req, res) => {
