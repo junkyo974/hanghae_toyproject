@@ -106,7 +106,7 @@ router.post('/signup', async (req, res) => {
       // 닉네임 최소 3글자 이상, 알파벳 대소문자, 숫자 외 에러메세지
       if (!(isValidNickname(nickname)) || (nickname.length < 4)) {
          res.status(412).json({
-            errorMessage: "이메일의 형식이 일치하지 않습니다."
+            errorMessage: "닉네임의 형식이 일치하지 않습니다."
          })
          return
       };
