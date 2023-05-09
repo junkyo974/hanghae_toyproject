@@ -32,7 +32,7 @@ router.post('/', authMiddleware, uploadImage.single('photo'), async (req, res) =
 // 게시글 조회 : GET -> localhost:3000/posts
 
 
-router.get('/posts', async (req, res) => {
+router.get('/', async (req, res) => {
     try {
         const postCount = await Posts.countDocuments();
         if (postCount === 0) {
@@ -61,7 +61,7 @@ router.get('/posts', async (req, res) => {
     }
 });
 
-<<<<<<< HEAD
+
 // best photo 조회
 router.get('/best', async (req, res) => {
 
@@ -90,7 +90,7 @@ router.get('/best', async (req, res) => {
         res.status(400).send({ message: '게시글 조회에 실패하였습니다.' });
     }
 });
-=======
+
 router.get('/newposts', async (req, res) => {
     try {
         const posts = await Posts.find().sort("-createdAt").limit(4); // 최근 4개의 게시물 조회
@@ -117,7 +117,7 @@ router.get('/newposts', async (req, res) => {
     }
 });
 
->>>>>>> 88182f82ab24fcf05354751ea4153b020212f78d
+
 
 // 게시글 상세조회 : GET -> localhost:3000/posts/:postId
 router.get('/:postId', async (req, res) => {
