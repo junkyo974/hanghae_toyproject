@@ -6,10 +6,10 @@ const nodemailer = require('nodemailer');
 const ejs = require('ejs');
 const path = require('path');
 const appDir = path.dirname(require.main.filename);
+const redisClient = require('../utils/index.js')
 
-require('dotenv').config();
 //6자리 랜덤숫자 생성
-let authNum = Math.random().toString().substr(2, 6);
+
 
 router.post('/authMail', async (req, res) => {
    const { email } = req.body
@@ -17,18 +17,15 @@ router.post('/authMail', async (req, res) => {
       const nicknameRegex = /^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z]+$/;
       return nicknameRegex.test(email);
    }
-
-
+   //인증번호 요청시 6자리수 랜덤생성후 redis db에 저장
+   // { 고유키값: authNum }
+   let authNum = Math.random().toString().substr(2, 6);
+   //freefix
    try {
-      let emailTemplete;
-      ejs.renderFile(appDir + '/template/authMail.ejs',
-         { authCode: authNum }, function (err, data) {
-            if (err) { console.log(err) }
-            emailTemplete = data;
-         });
+      const emailTemplate = await ejs.renderFile(appDir + '/template/authMail.ejs', { authCode: authNum });
+      const redisSetResult = await redisClient.SETEX(email, 100, authNum)
 
-
-      let transporter = nodemailer.createTransport({ // 보내는사람 메일 설정입니다.
+      const transporter = nodemailer.createTransport({ // 보내는사람 메일 설정입니다.
          service: 'Naver', // 보낼 메일서비스명
          port: 587,
          secure: false,
@@ -38,34 +35,28 @@ router.post('/authMail', async (req, res) => {
          }
       });
 
-      let mailOptions = {
+      const mailOptions = {
          from: process.env.NODEMAILER_USER,
          to: email,
          subject: '회원가입을 위한 인증번호를 입력해주세요.',
-         html: emailTemplete,
+         html: emailTemplate,
       }
 
       // 닉네임 최소 3글자 이상, 알파벳 대소문자, 숫자 외 에러메세지
       if (!(isValidEmail(email)) || (email.length < 4)) {
-         res.status(412).json({
+         return res.status(412).json({
             errorMessage: "이메일의 형식이 일치하지 않습니다."
          })
-         return
-      } else {
-         transporter.sendMail(mailOptions, (error, info) => { // 이메일 발송
-            res.status(200)
-               .json({ "message": `${email}주소로 이메일 발송 성공` })
-            transporter.close()
-         })
+
       }
-
-
-
-      transporter.sendMail(mailOptions, (error, info) => { // 이메일 발송
-         res.status(200).json({ "message": `${email}주소로 이메일 발송 성공` })
-            // console.log('이메일 발송에 성공했습니다: ' ) // 성공
-         transporter.close()
-      })
+      transporter.sendMail(mailOptions, (error, info) => {
+         if (error) {
+            console.error(`${req.method} ${req.originalUrl} : ${error.message}`);
+            return res.status(500).json({ errorMessage: "이메일 발송 중 오류가 발생했습니다." });
+         }
+         res.status(200).json({ message: `${email}주소로 이메일 발송 성공1` });
+         transporter.close();
+      });
    } catch (error) {
       console.error(`${req.method} ${req.originalUrl} : ${error.message}`);
    }
@@ -73,55 +64,61 @@ router.post('/authMail', async (req, res) => {
 
 // 회원 가입 API
 router.post('/signup', async (req, res) => {
-   const { authcode, nickname, password, confirm, } = req.body
+   const { email, authcode, nickname, password, confirm } = req.body
+
+   //회원가입 post 요청시 redis에 저장된 authNum값을 고유한 번
+
    function isValidNickname(nickname) {
       const nicknameRegex = /^[a-zA-Z0-9]+$/ig;
       return nicknameRegex.test(nickname);
    }
 
+   const redisSetResult = await redisClient.get(email)
+   console.log(redisSetResult)
+
    try {
-      if (authcode !== authNum) {
-         return res.status(412).json({
+      if (authcode !== redisSetResult) {
+         return res.status(400).json({
             errorMessage: "인증코드가 일치하지 않습니다"
          });
       }
       const isExistuser = await UserSchema.findOne({ nickname });
       if (isExistuser) {
-         res.status(412).json({
+         return res.status(400).json({
             errorMessage: "중복된 닉네임입니다."
          })
-         return
+
       };
 
       // 패스워드, 확인패스워드 일치 검증
       if (password !== confirm) {
-         res.status(412).json({
+         return res.status(400).json({
             errorMessage: "패스워드가 일치하지 않습니다."
          })
-         return
+
       };
 
       // 패스워드 닉네임을 포함시키면 에러메세지
       if (password.includes(nickname)) {
-         res.status(412).json({
+         return res.status(400).json({
             errorMessage: "패스워드에 닉네임이 포함되어 있습니다."
          })
-         return
+
       };
 
       // 닉네임 최소 3글자 이상, 알파벳 대소문자, 숫자 외 에러메세지
-      if (!(isValidNickname(nickname)) || (nickname.length < 4)) {
-         res.status(412).json({
+      if (!isValidNickname(nickname) || nickname.length < 4) {
+         return res.status(400).json({
             errorMessage: "닉네임의 형식이 일치하지 않습니다."
          })
-         return
+
       };
       // 패스워드 4글자 이하이면 에러메세지 
       if (password.length < 4) {
-         res.status(412).json({
+         return res.status(400).json({
             errorMessage: "패스워드 형식이 일치하지 않습니다."
          })
-         return
+
       }
 
       // 닉네임 DB 중복 검증
@@ -130,8 +127,8 @@ router.post('/signup', async (req, res) => {
       return res.status(201).json({ message: "회원 가입에 성공하였습니다." });
 
    } catch (error) {
-      // console.error(`${req.method} ${req.originalUrl} : ${error.message}`);
-      res.status(400).json({ "message": "이메일 발송 실패" })
+      console.error(`${req.method} ${req.originalUrl} : ${error.message}`);
+      res.status(400).json({ "message": "회원가입 실패" })
    }
 
 });
