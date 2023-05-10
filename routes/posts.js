@@ -31,8 +31,8 @@ router.post('/', authMiddleware, uploadImage.single('photo'), async (req, res) =
 
 // 게시글 조회 : GET -> localhost:3000/posts
 
-
-router.get('/', async (req, res) => {
+// Random한 게시글 한개 조회
+router.get('/random', async (req, res) => {
     try {
         const postCount = await Posts.countDocuments();
         if (postCount === 0) {
@@ -54,7 +54,9 @@ router.get('/', async (req, res) => {
         };
         const likeCount = await Likes.countDocuments({ postId: randomPost[0].postId });
         post.likeCount = likeCount;
-        res.json({ data: post });
+
+        const random = [post]
+        res.json( random );
     } catch (err) {
         console.error(err);
         res.status(400).send({ message: '게시글 조회에 실패하였습니다.' });
@@ -64,33 +66,39 @@ router.get('/', async (req, res) => {
 
 // best photo 조회
 router.get('/bestposts', async (req, res) => {
-
     try {
-        const posts = await Posts.find()
-        const results = await Promise.all(posts.map(async (item) => {
-        const post = {
-        postId: item.postId,
-        userId: item.userId,
-        nickname: item.nickname,
-        title: item.title,
-        createdAt: item.createdAt,
-        updatedAt: item.updatedAt,
-        photo_ip : item.photo_ip,
-        };
-        const likeCount = await Likes.countDocuments({ postId: item.postId });
-        post.likeCount = likeCount;
+        const posts = await Posts.find();
+        const results = await Promise.all(
+            posts.map(async (item) => {
+                const post = {
+                    postId: item.postId,
+                    userId: item.userId,
+                    nickname: item.nickname,
+                    title: item.title,
+                    createdAt: item.createdAt,
+                    updatedAt: item.updatedAt,
+                    photo_ip: item.photo_ip,
+                };
+                const likeCount = await Likes.countDocuments({ postId: item.postId });
+                post.likeCount = likeCount;
+                return post;
+            })
+        );
 
-        return post;
-        }))
+        if (results.length === 0) {
+            return res.status(412).json({ message: '게시물이 존재하지 않습니다.' });
+        }
+
         const bestPost = results.reduce((prev, curr) => (prev.likeCount > curr.likeCount ? prev : curr));
-
-        res.json({ data: bestPost });
+        const bestPosts = [bestPost];
+        res.json(bestPosts);
     } catch (err) {
         console.error(err);
         res.status(400).send({ message: '게시글 조회에 실패하였습니다.' });
     }
 });
 
+// 최근 4개 게시물 조회
 router.get('/newposts', async (req, res) => {
     try {
         const posts = await Posts.find().sort("-createdAt").limit(4); // 최근 4개의 게시물 조회
@@ -110,7 +118,7 @@ router.get('/newposts', async (req, res) => {
             post.likeCount = likeCount;
             return post;
         }));
-        res.json({ data: results });
+        res.json( results );
     } catch (err) {
         console.error(err);
         res.status(400).send({ message: "게시글 조회에 실패하였습니다." });

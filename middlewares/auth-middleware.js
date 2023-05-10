@@ -3,8 +3,8 @@ const User = require("../schemas/user.js");
 
 // 사용자 인증 미들웨어
 module.exports = async (req, res, next) => {
-   const { Authorization } = req.cookies;
-   const [authType, authToken] = (Authorization ?? "").split(" ");   // ( 변수 ?? "" ) null 병합 연산자
+   const authHeader = req.headers.authorization;
+   const [authType, authToken] = (authHeader ?? "").split(" ");  // ( 변수 ?? "" ) null 병합 연산자
 
    // jwt 검증
    try {
