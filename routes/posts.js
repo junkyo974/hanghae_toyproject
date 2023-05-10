@@ -54,7 +54,9 @@ router.get('/random', async (req, res) => {
         };
         const likeCount = await Likes.countDocuments({ postId: randomPost[0].postId });
         post.likeCount = likeCount;
-        res.json( post );
+
+        const random = [post]
+        res.json( random );
     } catch (err) {
         console.error(err);
         res.status(400).send({ message: '게시글 조회에 실패하였습니다.' });
@@ -83,8 +85,8 @@ router.get('/bestposts', async (req, res) => {
         return post;
         }))
         const bestPost = results.reduce((prev, curr) => (prev.likeCount > curr.likeCount ? prev : curr));
-
-        res.json( bestPost );
+        const bestPosts = [bestPost]
+        res.json( bestPosts );
     } catch (err) {
         console.error(err);
         res.status(400).send({ message: '게시글 조회에 실패하였습니다.' });
