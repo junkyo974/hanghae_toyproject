@@ -34,9 +34,8 @@ app.get('/', (req, res) => {
 });
 
 app.use(express.urlencoded({ extended: false }));
-app.use('/newposts', postsRouter);
 
-app.use('/posts', [likesRouter]);
+app.use('/likes', [likesRouter]);
 app.use('/posts', [postsRouter, commentsRouter]);
 app.use('/', [usersRouter, postsRouter])
 
