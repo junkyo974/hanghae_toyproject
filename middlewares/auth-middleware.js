@@ -6,14 +6,11 @@ module.exports = async (req, res, next) => {
    const { Authorization } = req.cookies;
    const [authType, authToken] = (Authorization ?? "").split(" ");   // ( 변수 ?? "" ) null 병합 연산자
 
-
-
    // jwt 검증
    try {
       // 1. authToken이 만료되었는지 확인
       // 2. authToken이 서버가 발급한 Token이 맞는지 확인
       const { userId } = jwt.verify(authToken, "customized-secret-key");
-
       // 1. authType이 Bearer 타입인지 확인하는 것! (Bearer랑 다르다면?)
       // 2. authToken을 검증하는 것! (비었다면?)
       if (!authToken || authType !== "Bearer") {

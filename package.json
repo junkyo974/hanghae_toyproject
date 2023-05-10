@@ -1,5 +1,7 @@
 {
   "dependencies": {
+    "@sentry/node": "^7.51.2",
+    "@slack/client": "^5.0.2",
     "aws-sdk": "^2.1373.0",
     "axios": "^1.4.0",
     "cookie-parser": "^1.4.6",
@@ -40,6 +42,7 @@
   },
   "homepage": "https://github.com/ystar5008/hanghae_toyproject#readme",
   "devDependencies": {
+    "artillery": "^2.0.0-31",
     "jest": "^29.5.0",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^4.6.3"

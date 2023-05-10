@@ -8,6 +8,7 @@ const path = require('path');
 const appDir = path.dirname(require.main.filename);
 const redisClient = require('../utils/index.js')
 
+
 //6자리 랜덤숫자 생성
 
 
@@ -23,7 +24,7 @@ router.post('/authMail', async (req, res) => {
    //freefix
    try {
       const emailTemplate = await ejs.renderFile(appDir + '/template/authMail.ejs', { authCode: authNum });
-      const redisSetResult = await redisClient.SETEX(email, 100, authNum)
+      const redisSetResult = await redisClient.SETEX(email, 180, authNum)
 
       const transporter = nodemailer.createTransport({ // 보내는사람 메일 설정입니다.
          service: 'Naver', // 보낼 메일서비스명
@@ -74,7 +75,7 @@ router.post('/signup', async (req, res) => {
    }
 
    const redisSetResult = await redisClient.get(email)
-   console.log(redisSetResult)
+   console.log(redisSetResult) //154856
 
    try {
       if (authcode !== redisSetResult) {
@@ -82,6 +83,7 @@ router.post('/signup', async (req, res) => {
             errorMessage: "인증코드가 일치하지 않습니다"
          });
       }
+
       const isExistuser = await UserSchema.findOne({ nickname });
       if (isExistuser) {
          return res.status(400).json({
@@ -95,7 +97,6 @@ router.post('/signup', async (req, res) => {
          return res.status(400).json({
             errorMessage: "패스워드가 일치하지 않습니다."
          })
-
       };
 
       // 패스워드 닉네임을 포함시키면 에러메세지
@@ -143,6 +144,7 @@ router.post('/login', async (req, res) => {
       // User Tbl 에서 nickname값으로 유저 있는지 찾기 (먼저, 상단에 ../schemas/user.js 불러오는 코드 작성)
       const user = await UserSchema.findOne({ nickname });
 
+
       // 1. 이메일에 일치하는 유저가 존재하지 않거나
       // 2. 유저를 찾았지만, 유저의 비밀번호와 입력한 비밀번호가 다를 때
       if (!user || user.password !== password) {
@@ -159,13 +161,14 @@ router.post('/login', async (req, res) => {
          nickname: user.nickname
       }, "customized-secret-key");
 
+
       // cookie를 통해 Authorizatin을 전달을 할 건데
       // Bearer 형태로 token 값을 전달할 거다.
       // Bearer는 어떤 타입으로 전달을 하는건지 지정하는 것, 왜 사용하는건지 찾아볼 것
-      res.cookie("Authorization", `Bearer ${token}`);
+      res.cookie(token);
 
       // status(200) 전달
-      res.status(200).json({ token });
+      res.status(200).json({ "Authorization": `Bearer ${token}` });
    } catch (err) {
       console.log(err);
       res.status(400).json({ errorMessage: "로그인에 실패하였습니다." });
