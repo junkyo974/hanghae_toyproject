@@ -66,27 +66,32 @@ router.get('/random', async (req, res) => {
 
 // best photo 조회
 router.get('/bestposts', async (req, res) => {
-
     try {
-        const posts = await Posts.find()
-        const results = await Promise.all(posts.map(async (item) => {
-        const post = {
-        postId: item.postId,
-        userId: item.userId,
-        nickname: item.nickname,
-        title: item.title,
-        createdAt: item.createdAt,
-        updatedAt: item.updatedAt,
-        photo_ip : item.photo_ip,
-        };
-        const likeCount = await Likes.countDocuments({ postId: item.postId });
-        post.likeCount = likeCount;
+        const posts = await Posts.find();
+        const results = await Promise.all(
+            posts.map(async (item) => {
+                const post = {
+                    postId: item.postId,
+                    userId: item.userId,
+                    nickname: item.nickname,
+                    title: item.title,
+                    createdAt: item.createdAt,
+                    updatedAt: item.updatedAt,
+                    photo_ip: item.photo_ip,
+                };
+                const likeCount = await Likes.countDocuments({ postId: item.postId });
+                post.likeCount = likeCount;
+                return post;
+            })
+        );
 
-        return post;
-        }))
+        if (results.length === 0) {
+            return res.status(412).json({ message: '게시물이 존재하지 않습니다.' });
+        }
+
         const bestPost = results.reduce((prev, curr) => (prev.likeCount > curr.likeCount ? prev : curr));
-        const bestPosts = [bestPost]
-        res.json( bestPosts );
+        const bestPosts = [bestPost];
+        res.json(bestPosts);
     } catch (err) {
         console.error(err);
         res.status(400).send({ message: '게시글 조회에 실패하였습니다.' });
