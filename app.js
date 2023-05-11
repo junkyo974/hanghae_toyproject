@@ -19,7 +19,7 @@ const connect = require('./schemas');
 connect();
 
 app.use(cors({
-    origin: "https://99-mini-project-pkad.vercel.app", // 접근 권한을 부여하는 도메인 서버에러 http://44.201.251.58:3000 
+    origin: "http://54.163.32.58:3000", // 접근 권한을 부여하는 도메인 서버에러 http://44.201.251.58:3000 
     credentials: true, // 응답 헤더에 Access-Control-Allow-Credentials 추가
     optionsSuccessStatus: 200, // 응답 상태 200으로 설정
 }));
