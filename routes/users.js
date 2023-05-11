@@ -165,10 +165,10 @@ router.post('/login', async (req, res) => {
       // cookie를 통해 Authorizatin을 전달을 할 건데
       // Bearer 형태로 token 값을 전달할 거다.
       // Bearer는 어떤 타입으로 전달을 하는건지 지정하는 것, 왜 사용하는건지 찾아볼 것
-      res.cookie(token);
+      res.cookie("Authorization", `Bearer ${token}`);
 
       // status(200) 전달
-      res.status(200).json({ "Authorization": `Bearer ${token}` });
+      res.status(200).json({ token });
    } catch (err) {
       console.log(err);
       res.status(400).json({ errorMessage: "로그인에 실패하였습니다." });
