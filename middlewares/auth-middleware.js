@@ -7,6 +7,8 @@ module.exports = async (req, res, next) => {
    // const [authType, authToken] = (authHeader ?? "").split(" ");  // ( 변수 ?? "" ) null 병합 연산자
 
    const { Authorization } = req.headers;
+   console.log(req.headers)
+   console.log(req.cookies)
    console.log(Authorization)
    //undefined.split = err
    // authorization 쿠키가 존재하지 않았을 때를 대비
