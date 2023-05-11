@@ -3,10 +3,17 @@ const User = require("../schemas/user.js");
 
 // 사용자 인증 미들웨어
 module.exports = async (req, res, next) => {
-   const authHeader = req.headers.authorization;
-   const [authType, authToken] = (authHeader ?? "").split(" ");  // ( 변수 ?? "" ) null 병합 연산자
+   // const authHeader = req.headers.authorization;
+   // const [authType, authToken] = (authHeader ?? "").split(" ");  // ( 변수 ?? "" ) null 병합 연산자
 
+   const { Authorization } = req.cookies;
+   //undefined.split = err
+   // authorization 쿠키가 존재하지 않았을 때를 대비
+   const [authType, authToken] = (Authorization ?? "").split(" ")
 
+   // 6 ~ 7번째 줄과 9 ~ 12번째 줄 두 코드 모두 JWT 검증 및 DB에서 사용자를 가져오는 부분에서 동일합니다. 
+   // 다만, 두 번째 코드에서는 쿠키가 존재하지 않을 수도 있으므로 Authorization 쿠키를 먼저 체크하고, 만약 존재하지 않으면 ""로 초기화하여 split 메소드가 오류를 발생시키지 않도록합니다. 
+   // 이는 첫 번째 코드에서는 Authorization 헤더가 존재하는지 여부를 확인할 필요가 없기 때문에 생략되었습니다.
 
    // jwt 검증
    try {
@@ -27,7 +34,7 @@ module.exports = async (req, res, next) => {
       res.locals.user = user;
       next();  // 이 미들웨어 다음으로 보낸다.
    } catch (error) {
-      console.error(error);
+      console.error(`${req.method} ${req.originalUrl} : ${error.message}`);
       res.status(403).json({ errorMessage: "전달된 쿠키에서 오류가 발생하였습니다." });
       return;
    }
