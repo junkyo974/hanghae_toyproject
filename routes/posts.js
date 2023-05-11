@@ -19,6 +19,9 @@ router.post('/', authMiddleware, uploadImage.single('photo'), async (req, res) =
         if (!content) {
             return res.status(410).json({ message: '게시글 내용의 형식이 일치하지 않습니다.' })
         }
+        if (req.file) {
+            photo_ip = req.file.location;
+        }
         await Posts.create({ userId, nickname, title, content, photo_ip });
         return res.status(200).json({ message: '게시글 작성에 성공하였습니다.' })
     } catch (err) {
