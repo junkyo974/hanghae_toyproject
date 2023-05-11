@@ -12,7 +12,7 @@ router.post('/', authMiddleware, uploadImage.single('photo'), async (req, res) =
     try {
         const { userId, nickname } = res.locals.user;
         const { title, content } = req.body;
-        const { photo_ip } = req;
+        let photo_ip  = '';
         if (!title) {
             return res.status(410).json({ message: '게시글 제목의 형식이 일치하지 않습니다.' })
         }
@@ -51,6 +51,7 @@ router.get('/random', async (req, res) => {
             userId: randomPost[0].userId,
             nickname: randomPost[0].nickname,
             title: randomPost[0].title,
+            content: randomPost[0].item.content,
             createdAt: randomPost[0].createdAt,
             updatedAt: randomPost[0].updatedAt,
             photo_ip: randomPost[0].photo_ip,
@@ -78,6 +79,7 @@ router.get('/bestposts', async (req, res) => {
                     userId: item.userId,
                     nickname: item.nickname,
                     title: item.title,
+                    content: item.content,
                     createdAt: item.createdAt,
                     updatedAt: item.updatedAt,
                     photo_ip: item.photo_ip,
