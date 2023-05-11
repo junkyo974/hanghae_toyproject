@@ -13,8 +13,8 @@ router.post('/:postId/comments', authMiddleware, async (req, res) => {
 
         let comment; // 댓글 내용을 저장할 변수를 선언한다.
         if ((req.body.comment).length > 0) { // 요청 바디의 comment 속성의 길이가 0보다 큰 경우
-            comment = req.body.comment; // comment 변수에 요청 바디의 comment 속성 값을 할당한다.
-        } else if ((req.body.comment).length === 0){ 
+            comment = req.body.comment; // { comment } = req.body랑 똑같다.
+        } else if ((req.body.comment).length === 0){  // { comment } = req.body의 길이가 0과 같은 때
             return res.status(410).json({ errorMessage: "댓글 내용을 입력해주세요."}); // 댓글 내용이 존재하지 않을 때
         } else if(!res.locals.user) {
             return res.status(403).json({ errorMessage: "로그인이 필요한 기능입니다."}) // 로그인을 하지 않았을 때
