@@ -15,16 +15,11 @@ module.exports = async (req, res, next) => {
    const [authType, authToken] = (authorization ?? "").split(" ")
    console.log(authToken)
 
-   // 6 ~ 7번째 줄과 9 ~ 12번째 줄 두 코드 모두 JWT 검증 및 DB에서 사용자를 가져오는 부분에서 동일합니다. 
-   // 다만, 두 번째 코드에서는 쿠키가 존재하지 않을 수도 있으므로 Authorization 쿠키를 먼저 체크하고, 만약 존재하지 않으면 ""로 초기화하여 split 메소드가 오류를 발생시키지 않도록합니다. 
-   // 이는 첫 번째 코드에서는 Authorization 헤더가 존재하는지 여부를 확인할 필요가 없기 때문에 생략되었습니다.
-
    // jwt 검증
    try {
       // 1. authToken이 만료되었는지 확인
       // 2. authToken이 서버가 발급한 Token이 맞는지 확인
       const { userId } = jwt.verify(authToken, "customized-secret-key");
-
       // 1. authType이 Bearer 타입인지 확인하는 것! (Bearer랑 다르다면?)
       // 2. authToken을 검증하는 것! (비었다면?)
       if (!authToken || authType !== "Bearer") {
