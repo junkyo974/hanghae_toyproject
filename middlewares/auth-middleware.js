@@ -9,7 +9,7 @@ module.exports = async (req, res, next) => {
    const { authorization } = req.headers;
    console.log(req.headers)
    console.log(req.cookies)
-   console.log(Authorization)
+   console.log(authorization)
    //undefined.split = err
    // authorization 쿠키가 존재하지 않았을 때를 대비
    const [authType, authToken] = (authorization ?? "").split(" ")
