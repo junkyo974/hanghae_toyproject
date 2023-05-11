@@ -5,7 +5,6 @@ const User = require("../schemas/user.js");
 module.exports = async (req, res, next) => {
    const authHeader = req.headers.authorization;
    const [authType, authToken] = (authHeader ?? "").split(" ");  // ( 변수 ?? "" ) null 병합 연산자
-   console.log(authHeader)
 
 
 
