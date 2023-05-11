@@ -9,6 +9,7 @@ const port = 3000;
 const morgan = require("morgan")
 const postsRouter = require('./routes/posts');
 const commentsRouter = require('./routes/comments');
+const childCommentsRouter = require("./routes/childComments");
 const usersRouter = require("./routes/users.js");
 const likesRouter = require("./routes/likes.js");
 require('dotenv').config();
@@ -36,7 +37,7 @@ app.get('/', (req, res) => {
 app.use(express.urlencoded({ extended: false }));
 
 app.use('/likes', [likesRouter]);
-app.use('/posts', [postsRouter, commentsRouter]);
+app.use('/posts', [postsRouter, commentsRouter, childCommentsRouter]);
 app.use('/', [usersRouter, postsRouter])
 
 
