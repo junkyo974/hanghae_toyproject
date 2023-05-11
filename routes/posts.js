@@ -12,15 +12,12 @@ router.post('/', authMiddleware, uploadImage.single('photo'), async (req, res) =
     try {
         const { userId, nickname } = res.locals.user;
         const { title, content } = req.body;
-        let photo_ip  = '';
+        const { photo_ip } = req;
         if (!title) {
             return res.status(410).json({ message: '게시글 제목의 형식이 일치하지 않습니다.' })
         }
         if (!content) {
             return res.status(410).json({ message: '게시글 내용의 형식이 일치하지 않습니다.' })
-        }
-        if (req.file) {
-            photo_ip = req.file.location;
         }
         await Posts.create({ userId, nickname, title, content, photo_ip });
         return res.status(200).json({ message: '게시글 작성에 성공하였습니다.' })
@@ -113,6 +110,7 @@ router.get('/newposts', async (req, res) => {
                 userId: item.userId,
                 nickname: item.nickname,
                 title: item.title,
+                content: item.content,
                 createdAt: item.createdAt,
                 updatedAt: item.updatedAt,
                 photo_ip: item.photo_ip,
